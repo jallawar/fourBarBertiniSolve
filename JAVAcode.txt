@@ -1,0 +1,121 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+public class findreals {
+
+	public static void main(String[] args) throws IOException {
+		// The directory is subject to change
+		File file = new File("C:\\Users\\lixia\\Desktop\\LIXIAXIN\\Spring 2020\\Math 490\\Solution File\\Trythis.txt");
+		Scanner scan = new Scanner(file);
+		
+		String fileContent = "";
+		/**
+		 * data1 contains the information about the real part of the variable
+		 * Specifically, data1[0] is a number of form 0.abc... where a is nonzero, 
+		 * and data1[1] specifies the place of decimal point 
+		 * For example, if data1[0]=0.1345, data1[1]=2, then the number should actually be 13.45
+		 * Similarly, data2 contains the information about the imaginary part of the variable
+		 */
+		String[] data1;
+		String[] data2;
+		/**
+		 * splitStr takes input from the scanner.
+		 * According to the current format, a typical element of splitStr should be
+		 * {"0.1345", "2"} 
+		 */
+		String[] splitStr;
+		/**
+		 * Arraylists recording one set of solution. 
+		 * Renewed each time when the scanner go to a new set of solution
+		 */
+		ArrayList<String> solutionSetRealPart = new ArrayList<String>();
+		ArrayList<String> solutionSetImagPart = new ArrayList<String>();
+		ArrayList<String> solutionSetRealPartDecimal = new ArrayList<String>();
+		ArrayList<String> solutionSetImagPartDecimal = new ArrayList<String>();
+		
+		// i is the counter. It's also the length of arraylists
+		int i = 0;
+		// the number of real solutions
+		int numRealSol = 0;
+		// indicates whether a set of solution is real or not
+		boolean realSol = true;
+		int j = 0;
+		
+		// Beginning taking inputs line by line
+		while (scan.hasNextLine()) {
+			// Counter increase by 1
+			++i;
+			// Split the input into real and imaginary parts
+			splitStr = scan.nextLine().split("\\s+");
+			// If it's not real already, skip unnecessary processes and go to next set of solution
+			if ((!realSol)&&(splitStr.length>=2)) {
+				continue;
+			}
+			/**
+			 * When there is a blank line in the input file, we collect and clear the data
+			 */
+			if (splitStr.length<2) {
+				++j;
+				System.out.println(j);
+				if (realSol) {
+					++numRealSol;
+				}
+				// reset counter i 
+				i = 0;
+				// reset the arraylists 
+				solutionSetRealPart = new ArrayList<String>();
+				solutionSetImagPart = new ArrayList<String>();
+				solutionSetRealPartDecimal = new ArrayList<String>();
+				solutionSetImagPartDecimal = new ArrayList<String>();
+				//reset realSol to be true
+				realSol = true;
+				//
+				
+				continue;
+			}
+			// Split the number and "decimal" of real and imaginary parts into data1 and data2
+			data1 = splitStr[0].split("e");
+			data2 = splitStr[1].split("e");
+			/**
+			 * Check whether the first 3 pairs of variables are conjugate.
+			 * We can change the number "3" to "n" later on (n<=7), 
+			 * by changing the condition (i<=6) to (i<=2n).
+			 */
+			if ((i%2 == 0)&&(i<=2)) {
+
+				if ( (!(solutionSetRealPart.get(i-2).contentEquals(data1[0].substring(0,13))))
+				|| !(solutionSetRealPartDecimal.get(i-2).contentEquals(data1[1])) )
+				{
+					realSol = false;
+//					System.out.println("No");
+				}
+
+				if  ( (  ((!(solutionSetImagPart.get(i-2).substring(0,12).contentEquals(data2[0].substring(1,13)))) 
+				&& (!(solutionSetImagPart.get(i-2).substring(1,13).contentEquals(data2[0].substring(0,12))))) )
+			      || !(solutionSetImagPartDecimal.get(i-2).contentEquals(data2[1]))) 			      
+				{
+					realSol = false;
+//					System.out.println("No");
+				}
+			}
+			solutionSetRealPart.add(data1[0].substring(0,13));
+			solutionSetImagPart.add(data2[0].substring(0,13));
+			solutionSetRealPartDecimal.add(data1[1]);
+			solutionSetImagPartDecimal.add(data2[1]);
+			
+//			System.out.println(solutionSetRealPart.get(i-1));
+//			System.out.println(solutionSetImagPart.get(i-1));
+//			fileContent = fileContent.concat(data1[0].substring(0,12)+ " Good ");
+//			fileContent = fileContent.concat(data1[1]+ "\n");
+//			fileContent = fileContent.concat(data2[0].substring(0,12)+ " Good ");
+//			fileContent = fileContent.concat(data2[1]+ "\n");
+			
+		}
+		FileWriter writer = new FileWriter("C:\\Users\\lixia\\Desktop\\LIXIAXIN\\Spring 2020\\Math 490\\Solution File\\Tryout.txt");
+		writer.write(fileContent);
+		writer.close();
+		System.out.println(numRealSol);
+	}
+}
